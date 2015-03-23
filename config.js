@@ -8,6 +8,10 @@ var config = {
         washingThresholdMinutes: 10,
         // How often to remember that the washing has finished
         reminderIntervalMinutes: 10,
+        // Indicates if all the events, methods, etc, will return seconds
+        // instead of minutes for reporting time, also the config values will
+        // be considered as seconds instead of minutes. Useful for testing. 
+        useSecondsInsteadOfMinutes: true,
         slackToken: '',
         slackChannelName: 'general'
 };
