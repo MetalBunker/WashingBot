@@ -89,7 +89,7 @@ function washingMonitorSensorCallback(){
         myMonitor.hasFinished = function (){
             return hasFinished;
         };
-
+        
         myMonitor.getStartTime = function (){
             return startTime;
         };
@@ -190,14 +190,6 @@ function washingMonitorSensorCallback(){
             // Last param is the array of arguments.
             if (options.onEvent) options.onEvent(eventType, args);
         }
-
-        // START OF REMOVE FOR SLACK
-
-        //TODO: Replaces uses of myMonitor.sendRequest
-        //TODO: Implement methods in washingMonitor to get time,
-        //  state (if it has started, finished, etc)
-
-        // END OF REMOVE FOR SLACK
 
         notifyEvent(washingMonitor.eventTypes.init);
 

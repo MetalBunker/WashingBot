@@ -32,6 +32,7 @@ function OnStart() {
     app.AddLayout(lay);
 
     setupMonitor();
+
     miniSlackBotInstance = miniSlackBot.create({
         token: config.slackToken,
         defaultChannelName: config.slackChannelName,
@@ -55,7 +56,6 @@ function OnStart() {
                 txtConnection.SetText("Disconnected :(");
             },
             onMessage : function (message, channelId) {
-                console.log("onMessage: '" + message + "', " + channelId);
                 var command = message.split(" ");
 
                 if (command.length > 0 && command[0] != "") {
@@ -92,6 +92,7 @@ function OnStart() {
             }
         }
     });
+
     say("Happy washing!");
 }
 
