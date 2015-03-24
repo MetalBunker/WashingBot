@@ -151,10 +151,14 @@
 
         function onWebsocketMessage(event) {
             var data = JSON.parse(event.data);
-            if (data.type == "message" && data.channel) {
+            if (data.type == "message" && data.channel && data.text && !data.reply_to) {
                 var text = data.text;
-                if (text.indexOf("<@" + botUserId + ">") == 0) {
-                    text = text.slice(("<@" + botUserId + ">").length).trim();
+                var indexOfBotUserId = text.indexOf("<@" + botUserId + ">");
+                if (indexOfBotUserId == 0 || data.channel[0] == "D") {
+                    if(indexOfBotUserId == 0){
+                        text = text.slice(("<@" + botUserId + ">").length);
+                    }
+                    text = text.trim();
                     if (text.length > 0 && text[0] == ":") {
                         text = text.slice(1).trim();
                     }
