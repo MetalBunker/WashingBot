@@ -1,11 +1,13 @@
 app.LoadScript("config.js");
 app.LoadScript("washingMonitor.js");
+app.LoadScript("miniSlackBot.js");
 
 var btnStart = null,
     btnStop = null,
     txtStatus = null,
     txtConnection = null,
-    monitor = null;
+    monitor = null,
+    miniSlackBotInstance = null;
 
 function OnStart() {
     lay = app.CreateLayout("Linear", "VCenter,FillXY");
@@ -30,6 +32,30 @@ function OnStart() {
     app.AddLayout(lay);
 
     setupMonitor();
+    miniSlackBotInstance = miniSlackBot.create({
+        token: config.slackToken,
+        defaultChannelName: config.slackChannelName,
+        events: {
+            onConnecting: function (){
+                txtConnection.SetText("Connecting...");
+            },
+            onConnectionOpened: function (isReconnect) {
+                txtConnection.SetText("Connected :)");
+                if (isReconnect) {
+                    miniSlackBotInstance.sendMessage("I'm back :space_invader:");
+                }
+                else {
+                    miniSlackBotInstance.sendMessage("Hello... boooooo! :ghost:");
+                }
+            },
+            onConnectionError: function () {
+                txtConnection.SetText("Connection error :'(");
+            },
+            onConnectionClosed: function () {
+                txtConnection.SetText("Disconnected :(");
+            }
+        }
+    });
     say("Happy washing!");
 }
 
@@ -46,9 +72,9 @@ function setupMonitor(){
     // the callbacks for each event
 
     config.onInit = function(){
-        console.log("Init!");        
+        console.log("Init!");
     };
-    
+
     config.onStart = function(){
         btnStart.SetVisibility("Hide");
         btnStop.SetVisibility("Show");
@@ -102,7 +128,7 @@ function setupMonitor(){
         txtStatus.SetText(txtStatus.GetText() + "\nMulo detected!");
         sendRequest(">>> Mulo colgando ropa! :white_check_mark:");
         say("Enjoy. You fucking moolo!");
-    }   
+    }
 
     // Logs all the events, just for testing
     config.onEvent = function (eventType, params){
@@ -110,7 +136,8 @@ function setupMonitor(){
         console.log(JSON.stringify(params));
     };
 
-    monitor = washingMonitor.init (config);
+    monitor = washingMonitor.init(config);
+
 }
 
 function say(speech) {
