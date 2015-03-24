@@ -56,6 +56,10 @@
 
             if (ws.readyState != WebSocket.OPEN) {
                 if (!isResend){
+                    // If the connection to slack is not opened and this message
+                    // is not something we're trying to resend, we save it to
+                    // resend it later, when the connection with slack is open
+                    // again.
                     wsMessages.push({ message: msg, channelId: channelId });
                 }
                 return false;
@@ -155,7 +159,6 @@
                         text = text.slice(1).trim();
                     }
 
-                    console.log("onWebsocketMessage '" + text + "', " + data.channel);
                     fireCallback('onMessage', text, data.channel);
                 }
             }
