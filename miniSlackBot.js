@@ -22,6 +22,9 @@
             },
             onConnectionClosed: function () {
                 txtConnection.SetText("Disconnected :(");
+            },
+            onMessage : function (message, channelId) {
+
             }
         }
     };
@@ -143,55 +146,16 @@
 
         function onWebsocketMessage(event) {
             var data = JSON.parse(event.data);
-            if (data.type == "message") {
+            if (data.type == "message" && data.channel) {
                 var text = data.text;
-                console.log(text);
                 if (text.indexOf("<@" + botUserId + ">") == 0) {
-                    text = text.slice("<@" + botUserId + ">".length).trim();
+                    text = text.slice(("<@" + botUserId + ">").length).trim();
                     if (text.length > 0 && text[0] == ":") {
                         text = text.slice(1).trim();
                     }
 
-                    var command = text.split(" ");
-
-                    if (command.length > 0 && command[0] != "") {
-
-                        switch (command[0]) {
-                            case "time":
-                                if (hasFinished) {
-                                    myMiniSlackBot.sendMessage(":clock3: It took me " + "'getWashingDurationInMinutes()'" + "mins. to do the washing");
-                                    //miniSlackBotInstance.sendMessage(":clock3: It took me " + getWashingDurationInMinutes() + "mins. to do the washing");
-                                    return;
-                                }
-                                if (startTime) {
-                                    myMiniSlackBot.sendMessage(":clock3: I've been washing for " + "'getWashingDurationInMinutes()'" + "mins. :smiley:");
-                                    //miniSlackBotInstance.sendMessage(":clock3: I've been washing for " + getWashingDurationInMinutes() + "mins. :smiley:");
-                                    return;
-                                }
-                                myMiniSlackBot.sendMessage("I haven't started yet! :smiley_cat:");
-                                //miniSlackBotInstance.sendMessage("I haven't started yet! :smiley_cat:");
-                                break;
-                            case "say":
-                                if (command.length == 1) {
-                                    myMiniSlackBot.sendMessage("What do you want me to say?");
-                                    //miniSlackBotInstance.sendMessage("What do you want me to say?");
-                                }
-                                else {
-                                    //TODO: This works because the function is global, throw an event instead
-                                    say(command.slice(1).join(" "));
-                                }
-
-                                break;
-                            default:
-                                myMiniSlackBot.sendMessage("You lost me there (I'm not trained to process that request).");
-                                //miniSlackBotInstance.sendMessage("You lost me there (I'm not trained to process that request).");
-                                break;
-                        }
-                    }
-                    else {
-                        myMiniSlackBot.sendMessage(":squirrel: I need your clothes, your boots, and your motorcycle!");
-                        //miniSlackBotInstance.sendMessage(":squirrel: I need your clothes, your boots, and your motorcycle!");
-                    }
+                    console.log("onWebsocketMessage '" + text + "', " + data.channel);
+                    fireCallback('onMessage', text, data.channel);
                 }
             }
         }

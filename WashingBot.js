@@ -53,6 +53,42 @@ function OnStart() {
             },
             onConnectionClosed: function () {
                 txtConnection.SetText("Disconnected :(");
+            },
+            onMessage : function (message, channelId) {
+                console.log("onMessage: '" + message + "', " + channelId);
+                var command = message.split(" ");
+
+                if (command.length > 0 && command[0] != "") {
+
+                    switch (command[0]) {
+                        case "time":
+                            if (monitor.hasFinished()) {
+                                miniSlackBotInstance.sendMessage(":clock3: It took me " + monitor.getWashingDurationInMinutes() + "mins. to do the washing");
+                                return;
+                            }
+                            if (monitor.getStartTime()) {
+                                miniSlackBotInstance.sendMessage(":clock3: I've been washing for " + monitor.getWashingDurationInMinutes() + "mins. :smiley:");
+                                return;
+                            }
+                            miniSlackBotInstance.sendMessage("I haven't started yet! :smiley_cat:");
+                            break;
+                        case "say":
+                            if (command.length == 1) {
+                                miniSlackBotInstance.sendMessage("What do you want me to say?");
+                            }
+                            else {
+                                say(command.slice(1).join(" "));
+                            }
+
+                            break;
+                        default:
+                            miniSlackBotInstance.sendMessage("You lost me there (I'm not trained to process that request).");
+                            break;
+                    }
+                }
+                else {
+                    miniSlackBotInstance.sendMessage(":squirrel: I need your clothes, your boots, and your motorcycle!");
+                }
             }
         }
     });
@@ -86,23 +122,23 @@ function setupMonitor(){
         btnStop.SetVisibility("Hide");
         btnStart.SetVisibility("Show");
         txtStatus.SetText("Ready to serve!");
-        sendRequest(">>> :no_entry: Washing canceled :(");
+        miniSlackBotInstance.sendMessage(">>> :no_entry: Washing canceled :(");
     };
 
     config.onWaitingWashingStart = function(){
         txtStatus.SetText("Waiting for start...");
         say("Waiting for start.");
-        sendRequest(">>> Machine configured. Waiting for start... (Let's pray together :pray:)");
+        miniSlackBotInstance.sendMessage(">>> Machine configured. Waiting for start... (Let's pray together :pray:)");
     };
 
     config.onWashingStarted = function(){
-        sendRequest("Washing started!");
+        miniSlackBotInstance.sendMessage("Washing started!");
         say("Washing start, detected!");
     };
 
     config.onWashingNotStarted = function(notificationCount){
         txtStatus.SetText("Washing never started! Still waiting (" + notificationCount + ")...");
-        sendRequest(":warning: Washing never started! Still waiting (" + notificationCount + ")...");
+        miniSlackBotInstance.sendMessage(":warning: Washing never started! Still waiting (" + notificationCount + ")...");
         say("Washing never started! Still waiting");
     };
 
@@ -112,12 +148,12 @@ function setupMonitor(){
 
     config.onFinished = function(washingDurationMinutes) {
         txtStatus.SetText("Laundry finished!!! Duration: " + washingDurationMinutes + "\nWaiting for mulo...");
-        sendRequest("Mulo a colgar la ropa!! :clock3: Duración del lavado: " + washingDurationMinutes);
+        miniSlackBotInstance.sendMessage("Mulo a colgar la ropa!! :clock3: Duración del lavado: " + washingDurationMinutes);
         say("Laundry finished.");
     }
 
     config.onFinishedReminder = function(minsSinceFinish, reminderCount) {
-        sendRequest(":information_source: " + reminderCount + " - Recordá colgar la ropa, hace " + minsSinceFinish + "mins. que terminó!");
+        miniSlackBotInstance.sendMessage(":information_source: " + reminderCount + " - Recordá colgar la ropa, hace " + minsSinceFinish + "mins. que terminó!");
         say("Remember, remember the clothes!");
     };
 
@@ -126,7 +162,7 @@ function setupMonitor(){
         btnStop.SetVisibility("Hide");
 
         txtStatus.SetText(txtStatus.GetText() + "\nMulo detected!");
-        sendRequest(">>> Mulo colgando ropa! :white_check_mark:");
+        miniSlackBotInstance.sendMessage(">>> Mulo colgando ropa! :white_check_mark:");
         say("Enjoy. You fucking moolo!");
     }
 
@@ -142,9 +178,4 @@ function setupMonitor(){
 
 function say(speech) {
     app.TextToSpeech(speech, 1.0, 1.0);
-}
-
-//TODO: Replaces uses of this method with the slackBot
-function sendRequest(msg){
-    monitor.sendRequest(msg);
 }

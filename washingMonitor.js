@@ -86,6 +86,18 @@ function washingMonitorSensorCallback(){
             notifyEvent(washingMonitor.eventTypes.stop);
         };
 
+        myMonitor.hasFinished = function (){
+            return hasFinished;
+        };
+
+        myMonitor.getStartTime = function (){
+            return startTime;
+        };
+
+        myMonitor.getWashingDurationInMinutes = function (){
+            return getWashingDurationInMinutes();
+        };
+
         function waitForStart(){
             washingMonitor.sensorCallbackFn = configureSensorForWashingStarted;
             sensor.Start();
