@@ -63,18 +63,18 @@ function OnStart() {
                     switch (command[0]) {
                         case "time":
                             if (monitor.hasFinished()) {
-                                miniSlackBotInstance.sendMessage(":clock3: It took me " + monitor.getWashingDurationInMinutes() + "mins. to do the washing");
+                                miniSlackBotInstance.sendMessage(":clock3: It took me " + monitor.getWashingDurationInMinutes() + "mins. to do the washing", channelId);
                                 return;
                             }
                             if (monitor.getStartTime()) {
-                                miniSlackBotInstance.sendMessage(":clock3: I've been washing for " + monitor.getWashingDurationInMinutes() + "mins. :smiley:");
+                                miniSlackBotInstance.sendMessage(":clock3: I've been washing for " + monitor.getWashingDurationInMinutes() + "mins. :smiley:", channelId);
                                 return;
                             }
-                            miniSlackBotInstance.sendMessage("I haven't started yet! :smiley_cat:");
+                            miniSlackBotInstance.sendMessage("I haven't started yet! :smiley_cat:", channelId);
                             break;
                         case "say":
                             if (command.length == 1) {
-                                miniSlackBotInstance.sendMessage("What do you want me to say?");
+                                miniSlackBotInstance.sendMessage("What do you want me to say?", channelId);
                             }
                             else {
                                 say(command.slice(1).join(" "));
@@ -82,12 +82,12 @@ function OnStart() {
 
                             break;
                         default:
-                            miniSlackBotInstance.sendMessage("You lost me there (I'm not trained to process that request).");
+                            miniSlackBotInstance.sendMessage("You lost me there (I'm not trained to process that request).", channelId);
                             break;
                     }
                 }
                 else {
-                    miniSlackBotInstance.sendMessage(":squirrel: I need your clothes, your boots, and your motorcycle!");
+                    miniSlackBotInstance.sendMessage(":squirrel: I need your clothes, your boots, and your motorcycle!", channelId);
                 }
             }
         }

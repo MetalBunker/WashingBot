@@ -55,8 +55,9 @@
             */
 
             if (ws.readyState != WebSocket.OPEN) {
-                if (!isResend) wsMessages.push(
-                    { message: msg, channelId: channelId });
+                if (!isResend){
+                    wsMessages.push({ message: msg, channelId: channelId });
+                }
                 return false;
             }
 
