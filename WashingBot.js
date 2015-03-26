@@ -7,9 +7,28 @@ var btnStart = null,
     txtStatus = null,
     txtConnection = null,
     monitor = null,
-    miniSlackBotInstance = null;
+    miniSlackBotInstance = null,
+    netClient = null,
+    udpIpAddress = null;
 
 function OnStart() {
+
+    setupUI();
+    setupNetClient();
+    setupMonitor();
+    setupSlackBot();
+
+    say("Happy washing!");
+}
+
+function setupNetClient(){
+    if (!config.sendUdpUpdates) return;   
+    
+    netClient = app.CreateNetClient("UDP");
+    udpIpAddress = config.udpIpAddress ? config.udpIpAddress : netClient.GetBroadcastAddress();    
+}
+
+function setupUI(){
     lay = app.CreateLayout("Linear", "VCenter,FillXY");
 
     txtStatus = app.CreateText("", 0.8, 0.3, "Multiline");
@@ -30,9 +49,17 @@ function OnStart() {
     txtConnection.SetText("Waiting...");
 
     app.AddLayout(lay);
+}
 
-    setupMonitor();
+function btnStart_OnTouch() {
+    monitor.start();
+}
 
+function btnStop_OnTouch() {
+    monitor.stop();
+}
+
+function setupSlackBot(){
     miniSlackBotInstance = miniSlackBot.create({
         token: config.slackToken,
         defaultChannelName: config.slackChannelName,
@@ -92,16 +119,6 @@ function OnStart() {
             }
         }
     });
-
-    say("Happy washing!");
-}
-
-function btnStart_OnTouch() {
-    monitor.start();
-}
-
-function btnStop_OnTouch() {
-    monitor.stop();
 }
 
 function setupMonitor(){
@@ -143,8 +160,9 @@ function setupMonitor(){
         say("Washing never started! Still waiting");
     };
 
-    config.onWashingMovement = function(washingDurationMinutes) {
+    config.onWashingMovement = function(washingDurationMinutes, x, y, z) {
         txtStatus.SetText("Washing for " + washingDurationMinutes + "mins...");
+        sendPacket(x, y, z);
     }
 
     config.onFinished = function(washingDurationMinutes) {
@@ -174,9 +192,17 @@ function setupMonitor(){
     };
 
     monitor = washingMonitor.init(config);
-
 }
 
 function say(speech) {
     app.TextToSpeech(speech, 1.0, 1.0);
+}
+
+function sendPacket(x,y,z){
+    if (!config.sendUdpUpdates) return;
+
+    // We substract 9 from z axis so the value is closer to the other two, useful 
+    // for graphing.
+    var packet = x + "|"+ y +"|"+ (z-9);
+    netClient.SendDatagram( packet, "UTF-8", udpIpAddress, config.udpPort );
 }

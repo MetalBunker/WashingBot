@@ -10,8 +10,14 @@ var config = {
         reminderIntervalMinutes: 10,
         // Indicates if all the events, methods, etc, will return seconds
         // instead of minutes for reporting time, also the config values will
-        // be considered as seconds instead of minutes. Useful for testing. 
-        useSecondsInsteadOfMinutes: true,
+        // be considered as seconds instead of minutes. Useful for testing.
+        useSecondsInsteadOfMinutes: false,
+        // Slack config
         slackToken: '',
-        slackChannelName: 'general'
+        slackChannelName: 'general',
+        // Indicates if udp updates with accelerometer values should be sent
+        sendUdpUpdates: true,
+        udpPort: 47624,
+        // If this IP is not present (undefined or null), broadcast ip will be used
+        udpIpAddress: null
 };

@@ -1,5 +1,5 @@
-function washingMonitorSensorCallback(){
-    washingMonitor.sensorCallbackFn();
+function washingMonitorSensorCallback(x, y, z){
+    washingMonitor.sensorCallbackFn(x, y, z);
 }
 
 (function (washingMonitor){
@@ -39,11 +39,7 @@ function washingMonitorSensorCallback(){
         if (monitor){
             console.log("WashingMonitor already created, returning existing instance.");
             return monitor;
-        }
-
-        /* Options
-        useSecondsForTime
-        */
+        }    
 
         var myMonitor = monitor = {};
 
@@ -89,7 +85,7 @@ function washingMonitorSensorCallback(){
         myMonitor.hasFinished = function (){
             return hasFinished;
         };
-        
+
         myMonitor.getStartTime = function (){
             return startTime;
         };
@@ -112,7 +108,7 @@ function washingMonitorSensorCallback(){
             washingMonitor.sensorCallbackFn = washingStarted;
         }
 
-        function washingStarted(){
+        function washingStarted(x, y, z){
             // We clear the washingStart interval
             clearInterval(timeOutHandler);
 
@@ -120,7 +116,7 @@ function washingMonitorSensorCallback(){
 
             // Now the machine is washing, on each movement we reset the counter
             washingMonitor.sensorCallbackFn = washingMovementDetected;
-            washingMovementDetected();
+            washingMovementDetected(x, y, z);
 
             notifyEvent(washingMonitor.eventTypes.washingStarted);
         };
@@ -129,7 +125,7 @@ function washingMonitorSensorCallback(){
             notifyEvent(washingMonitor.eventTypes.washingNotStarted, washingNotStartedCounter++);
         }
 
-        function washingMovementDetected(){
+        function washingMovementDetected(x, y, z){
             // Resets the laundryFinished timers, so it keeps counting
             if (timeOutHandler) clearTimeout(timeOutHandler);
             timeOutHandler = setTimeout(washingFinished, convertToMs(options.washingThresholdMinutes));
@@ -138,7 +134,7 @@ function washingMonitorSensorCallback(){
             // when it stopped moving
             finishTime = new Date();
 
-            notifyEvent(washingMonitor.eventTypes.washingMovement, getWashingDurationInMinutes());
+            notifyEvent(washingMonitor.eventTypes.washingMovement, getWashingDurationInMinutes(), x, y, z);
         }
 
         function washingFinished(){
