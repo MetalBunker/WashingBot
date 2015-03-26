@@ -1,6 +1,5 @@
 (function (washingMonitor){
 
-    washingMonitor.sensorCallbackFn = null; // Rhino hack, look at bottom
     var monitor = null;
 
     //TODO: Values should in caps, right?
@@ -49,7 +48,8 @@
             finishTime = null,
             hasFinished = false,
             washingNotStartedCounter = 0,
-            finishedReminderCounter = 0;
+            finishedReminderCounter = 0,
+            sensorCallbackFn = null; // Rhino hack, look at bottom
 
         myMonitor.start = function(){
             if (!sensor){
@@ -96,8 +96,18 @@
             return getWashingDurationInMinutes();
         };
 
+        // Rhino hack, look at bottom
+        myMonitor.fireSensorCallback = function(x, y, z){
+            if (checkMovementThreshold(x, y, z)) sensorCallbackFn(x, y, z);
+        };
+
+        // TODO: Implement this function
+        function checkMovementThreshold(x, y, z){
+            return true;
+        }
+
         function waitForStart(){
-            washingMonitor.sensorCallbackFn = configureSensorForWashingStarted;
+            sensorCallbackFn = configureSensorForWashingStarted;
             sensor.Start();
 
             timeOutHandler = setInterval(washingNotStarted, convertToMs(options.startTimeTimeoutMinutes));
@@ -108,7 +118,7 @@
         // Hack: This function is necessary because upon calling sensor.Start(),
         // it always seems to fire a false event
         function configureSensorForWashingStarted(){
-            washingMonitor.sensorCallbackFn = washingStarted;
+            sensorCallbackFn = washingStarted;
         }
 
         function washingStarted(x, y, z){
@@ -119,7 +129,7 @@
 
             // Now the machine is washing, on each movement we need to reset the
             // finish timeout
-            washingMonitor.sensorCallbackFn = washingMovementDetected;
+            sensorCallbackFn = washingMovementDetected;
             washingMovementDetected(x, y, z);
 
             notifyEvent(washingMonitor.eventTypes.washingStarted);
@@ -157,7 +167,7 @@
                 notifyEvent(washingMonitor.eventTypes.finishedReminder, minsSinceFinish, finishedReminderCounter++);
             }, convertToMs(options.reminderIntervalMinutes));
 
-            washingMonitor.sensorCallbackFn = personMovementDetected;
+            sensorCallbackFn = personMovementDetected;
             sensor.Start();
         }
 
@@ -197,6 +207,11 @@
         return myMonitor;
     };
 
+    // Rhino hack, look at bottom
+    washingMonitor.fireSensorCallback = function(x, y, z){
+        if (monitor) monitor.fireSensorCallback(x, y, z);
+    };
+
 }(this.washingMonitor = this.washingMonitor || {}));
 
 // This function is a needed hack due to the limitation in the bridge between Java
@@ -207,10 +222,10 @@
 // functions as callbacks to objects that live on the Java realm, as the sensor
 // in this case.
 // So, as we are using the module pattern in washingMonitor, our functions live
-// inside a closure and can't be called by Rhino. As a workaround, we setup
-// washingMonitorSensorCallback function as the forever callback for our sensor,
-// and we just set washingMonitor.sensorCallbackFn property to select which
-// function should be executed as a callback.
+// inside a closure and can't be called by Rhino. As a workaround, we setup this
+// global washingMonitorSensorCallback function as the forever callback for our
+// sensor, and inside the monitor we just set the sensorCallbackFn var to select
+// which function should be executed as a callback.
 function washingMonitorSensorCallback(x, y, z){
-    washingMonitor.sensorCallbackFn(x, y, z);
+    washingMonitor.fireSensorCallback(x, y, z);
 }
