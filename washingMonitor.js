@@ -1,10 +1,6 @@
-function washingMonitorSensorCallback(x, y, z){
-    washingMonitor.sensorCallbackFn(x, y, z);
-}
-
 (function (washingMonitor){
 
-    washingMonitor.sensorCallbackFn = null;
+    washingMonitor.sensorCallbackFn = null; // Rhino hack, look at bottom
     var monitor = null;
 
     //TODO: Values should in caps, right?
@@ -21,6 +17,7 @@ function washingMonitorSensorCallback(x, y, z){
         personMovement: 9
     };
 
+    // TODO: Rename this, it's not a matrix!
     // Matrix that indicates which callback to call for each eventType
     var notificationMatrix = {};
     notificationMatrix[washingMonitor.eventTypes.init] = "onInit";
@@ -37,9 +34,11 @@ function washingMonitorSensorCallback(x, y, z){
     washingMonitor.init = function(options){
 
         if (monitor){
+            // For now, because of a limitation with the sensor callback, we can
+            // only have one monitor alive. Maybe this will improve in the future.
             console.log("WashingMonitor already created, returning existing instance.");
             return monitor;
-        }    
+        }
 
         var myMonitor = monitor = {};
 
@@ -62,8 +61,8 @@ function washingMonitorSensorCallback(x, y, z){
             washingNotStartedCounter = 0;
             finishedReminderCounter = 0;
 
-            // We start waiting for the machine moving in a few minutes, otherwise
-            // we'll still have the cellphone in our hands.
+            // We don't start waiting for the machine to move right away, otherwise
+            // we would still have the cellphone in our hands.
             startTimeoutHandler = setTimeout(waitForStart, convertToMs(options.cellDropTimeoutMinutes));
 
             // This makes the monitor work when the display goes off
@@ -82,14 +81,17 @@ function washingMonitorSensorCallback(x, y, z){
             notifyEvent(washingMonitor.eventTypes.stop);
         };
 
+        // TODO: Review, maybe this could be improved
         myMonitor.hasFinished = function (){
             return hasFinished;
         };
 
+        // TODO: Review, maybe this could be improved
         myMonitor.getStartTime = function (){
             return startTime;
         };
 
+        // TODO: Review, maybe this could be improved
         myMonitor.getWashingDurationInMinutes = function (){
             return getWashingDurationInMinutes();
         };
@@ -103,7 +105,8 @@ function washingMonitorSensorCallback(x, y, z){
             notifyEvent(washingMonitor.eventTypes.waitingWashingStart);
         }
 
-        // Hack: This function is necessary because upon calling "Start", the sensor always fires an event
+        // Hack: This function is necessary because upon calling sensor.Start(),
+        // it always seems to fire a false event
         function configureSensorForWashingStarted(){
             washingMonitor.sensorCallbackFn = washingStarted;
         }
@@ -114,7 +117,8 @@ function washingMonitorSensorCallback(x, y, z){
 
             startTime = new Date();
 
-            // Now the machine is washing, on each movement we reset the counter
+            // Now the machine is washing, on each movement we need to reset the
+            // finish timeout
             washingMonitor.sensorCallbackFn = washingMovementDetected;
             washingMovementDetected(x, y, z);
 
@@ -126,12 +130,13 @@ function washingMonitorSensorCallback(x, y, z){
         }
 
         function washingMovementDetected(x, y, z){
-            // Resets the laundryFinished timers, so it keeps counting
+            // Resets the washingFinished timer, so it keeps counting. When
+            // it fires, the washing will have finished.
             if (timeOutHandler) clearTimeout(timeOutHandler);
             timeOutHandler = setTimeout(washingFinished, convertToMs(options.washingThresholdMinutes));
 
-            // We save the last movement time, as the possible finish time, so we'll know exactly
-            // when it stopped moving
+            // We save the last movement time, as the possible finish time,
+            // so we'll know exactly when it stopped moving
             finishTime = new Date();
 
             notifyEvent(washingMonitor.eventTypes.washingMovement, getWashingDurationInMinutes(), x, y, z);
@@ -193,3 +198,19 @@ function washingMonitorSensorCallback(x, y, z){
     };
 
 }(this.washingMonitor = this.washingMonitor || {}));
+
+// This function is a needed hack due to the limitation in the bridge between Java
+// and javascript.
+// Rhino can only call functions that are defined in the global scope (defined,
+// declared, written (anonymous functions, or injected ones them won't work
+// either)), that's specially important to have in mind when we need to pass
+// functions as callbacks to objects that live on the Java realm, as the sensor
+// in this case.
+// So, as we are using the module pattern in washingMonitor, our functions live
+// inside a closure and can't be called by Rhino. As a workaround, we setup
+// washingMonitorSensorCallback function as the forever callback for our sensor,
+// and we just set washingMonitor.sensorCallbackFn property to select which
+// function should be executed as a callback.
+function washingMonitorSensorCallback(x, y, z){
+    washingMonitor.sensorCallbackFn(x, y, z);
+}
