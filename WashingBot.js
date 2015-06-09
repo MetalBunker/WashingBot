@@ -60,6 +60,8 @@ function btnStop_OnTouch() {
 }
 
 function setupSlackBot(){
+    if (!config.slackToken) return;
+
     miniSlackBotInstance = miniSlackBot.create({
         token: config.slackToken,
         defaultChannelName: config.slackChannelName,
@@ -140,23 +142,23 @@ function setupMonitor(){
         btnStop.SetVisibility("Hide");
         btnStart.SetVisibility("Show");
         txtStatus.SetText("Ready to serve!");
-        miniSlackBotInstance.sendMessage(">>> :no_entry: Washing canceled :(");
+        notifySlack(">>> :no_entry: Washing canceled :(");
     };
 
     config.onWaitingWashingStart = function(){
         txtStatus.SetText("Waiting for start...");
         say("Waiting for start.");
-        miniSlackBotInstance.sendMessage(">>> Machine configured. Waiting for start... (Let's pray together :pray:)");
+        notifySlack(">>> Machine configured. Waiting for start... (Let's pray together :pray:)");
     };
 
     config.onWashingStarted = function(){
-        miniSlackBotInstance.sendMessage("Washing started!");
+        notifySlack("Washing started!");
         say("Washing start, detected!");
     };
 
     config.onWashingNotStarted = function(notificationCount){
         txtStatus.SetText("Washing never started! Still waiting (" + notificationCount + ")...");
-        miniSlackBotInstance.sendMessage(":warning: Washing never started! Still waiting (" + notificationCount + ")...");
+        notifySlack(":warning: Washing never started! Still waiting (" + notificationCount + ")...");
         say("Washing never started! Still waiting");
     };
 
@@ -167,12 +169,12 @@ function setupMonitor(){
 
     config.onFinished = function(washingDurationMinutes) {
         txtStatus.SetText("Laundry finished!!! Duration: " + washingDurationMinutes + "\nWaiting for mulo...");
-        miniSlackBotInstance.sendMessage("Mulo a colgar la ropa!! :clock3: Duración del lavado: " + washingDurationMinutes);
+        notifySlack("Mulo a colgar la ropa!! :clock3: Duración del lavado: " + washingDurationMinutes);
         say("Laundry finished.");
     }
 
     config.onFinishedReminder = function(minsSinceFinish, reminderCount) {
-        miniSlackBotInstance.sendMessage(":information_source: " + reminderCount + " - Recordá colgar la ropa, hace " + minsSinceFinish + "mins. que terminó!");
+        notifySlack(":information_source: " + reminderCount + " - Recordá colgar la ropa, hace " + minsSinceFinish + "mins. que terminó!");
         say("Remember, remember the clothes!");
     };
 
@@ -181,7 +183,7 @@ function setupMonitor(){
         btnStop.SetVisibility("Hide");
 
         txtStatus.SetText(txtStatus.GetText() + "\nMulo detected!");
-        miniSlackBotInstance.sendMessage(">>> Mulo colgando ropa! :white_check_mark:");
+        notifySlack(">>> Mulo colgando ropa! :white_check_mark:");
         say("Enjoy. You fucking moolo!");
     }
 
@@ -196,6 +198,12 @@ function setupMonitor(){
 
 function say(speech) {
     app.TextToSpeech(speech, 1.0, 1.0);
+}
+
+function notifySlack(message){
+    if (!config.slackToken) return;
+
+    miniSlackBotInstance.sendMessage(message);
 }
 
 // Sends a packet by UDP with the format "x|y|z". Useful for debugging or graphing
