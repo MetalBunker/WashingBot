@@ -46,7 +46,7 @@ function setupUI(){
 
     txtConnection = app.CreateText("", 0.8, 0.2, "Multiline");
     lay.AddChild(txtConnection);
-    txtConnection.SetText("Waiting...");
+    txtConnection.SetText("Slack notifications disabled");
 
     app.AddLayout(lay);
 }
