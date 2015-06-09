@@ -22,10 +22,10 @@ function OnStart() {
 }
 
 function setupNetClient(){
-    if (!config.sendUdpUpdates) return;   
-    
+    if (!config.sendUdpUpdates) return;
+
     netClient = app.CreateNetClient("UDP");
-    udpIpAddress = config.udpIpAddress ? config.udpIpAddress : netClient.GetBroadcastAddress();    
+    udpIpAddress = config.udpIpAddress ? config.udpIpAddress : netClient.GetBroadcastAddress();
 }
 
 function setupUI(){
@@ -198,10 +198,14 @@ function say(speech) {
     app.TextToSpeech(speech, 1.0, 1.0);
 }
 
+// Sends a packet by UDP with the format "x|y|z". Useful for debugging or graphing
+// while washing.
+// We substract 9 from the Z axis so the value is closer to the other two, useful
+// for graphing.
 function sendPacket(x,y,z){
     if (!config.sendUdpUpdates) return;
 
-    // We substract 9 from z axis so the value is closer to the other two, useful 
+    // We substract 9 from z axis so the value is closer to the other two, useful
     // for graphing.
     var packet = x + "|"+ y +"|"+ (z-9);
     netClient.SendDatagram( packet, "UTF-8", udpIpAddress, config.udpPort );
