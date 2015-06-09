@@ -67,10 +67,10 @@ function setupSlackBot(){
         defaultChannelName: config.slackChannelName,
         events: {
             onConnecting: function (){
-                txtConnection.SetText("Connecting...");
+                txtConnection.SetText("Connecting to Slack...");
             },
             onConnectionOpened: function (isReconnect) {
-                txtConnection.SetText("Connected :)");
+                txtConnection.SetText("Connected to Slack :)");
                 if (isReconnect) {
                     miniSlackBotInstance.sendMessage("I'm back :space_invader:");
                 }
@@ -79,10 +79,10 @@ function setupSlackBot(){
                 }
             },
             onConnectionError: function () {
-                txtConnection.SetText("Connection error :'(");
+                txtConnection.SetText("Slack connection error :'(");
             },
             onConnectionClosed: function () {
-                txtConnection.SetText("Disconnected :(");
+                txtConnection.SetText("Disconnected from Slack :(");
             },
             onMessage : function (message, channelId) {
                 var command = message.split(" ");
@@ -168,13 +168,13 @@ function setupMonitor(){
     }
 
     config.onFinished = function(washingDurationMinutes) {
-        txtStatus.SetText("Laundry finished!!! Duration: " + washingDurationMinutes + "\nWaiting for mulo...");
-        notifySlack("Mulo a colgar la ropa!! :clock3: Duración del lavado: " + washingDurationMinutes);
+        txtStatus.SetText("Laundry finished!!! Duration: " + washingDurationMinutes + "\nWaiting for human...");
+        notifySlack("Human go hang the clothes!! :clock3: Washing duration: " + washingDurationMinutes);
         say("Laundry finished.");
     }
 
     config.onFinishedReminder = function(minsSinceFinish, reminderCount) {
-        notifySlack(":information_source: " + reminderCount + " - Recordá colgar la ropa, hace " + minsSinceFinish + "mins. que terminó!");
+        notifySlack(":information_source: " + reminderCount + " - Remember to hang the clothes, washing has finished " + minsSinceFinish + "mins. ago!");
         say("Remember, remember the clothes!");
     };
 
@@ -182,9 +182,9 @@ function setupMonitor(){
         btnStart.SetVisibility("Show");
         btnStop.SetVisibility("Hide");
 
-        txtStatus.SetText(txtStatus.GetText() + "\nMulo detected!");
-        notifySlack(">>> Mulo colgando ropa! :white_check_mark:");
-        say("Enjoy. You fucking moolo!");
+        txtStatus.SetText(txtStatus.GetText() + "\nHuman detected!");
+        notifySlack(">>> Human hanging clothes! :white_check_mark:");
+        say("Enjoy. You poor human!");
     }
 
     // Logs all the events, just for testing
