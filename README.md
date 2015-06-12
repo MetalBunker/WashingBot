@@ -12,7 +12,7 @@ Notifications are verbal (yes, he likes to talk) and by chat, using [Slack](http
 
 The code is easily extensible, we hope, so you can add new notification mechanisms and commands very easily (plus, we want to see what crazy ideas you have on your mind). And also there are a lot of pieces that could be useful for another projects, check it out & hack it! 
 
-#### Download & Installation
+### Download & Installation
 
 As there is no config UI yet, you'll need to install it manually in order to be able to configure it. Although we could create an APK with default config values, but that would mean no chatting :(  
 So: 
@@ -109,7 +109,7 @@ If you test it, just tell us and we'll add your device to the list ;)
 
 - **Washing start is never detected:** you could do some tests by shaking you phone, does it work? Maybe you have an ultra-quiet washing machine? The bot doesn't have any low level threshold, it understands "movement" from the most minimal accelerometer readings, so maybe your device is not sensitive enough? Maybe you could try placing the phone over different areas of the washing machine and see how it goes.
 - **Washing end is never detected:** make sure you have waited long enough for the threshold to be reached (`washingThresholdMinutes` in config.js), default is 10 minutes. You should also make sure that your phone's accelerometer doesn't report garbage when the screen goes off, you can use the UDP debugging for this (or the DroidScript IDE directly also).
-- **The cycle ends at lightning speed:** make sure you didn't enabled `useSecondsInsteadOfMinutes` in the config :P
+- **The cycle ends at lightning speed:** make sure `useSecondsInsteadOfMinutes` is disabled in the config :P
 - **Never connects to Slack:** make sure it's properly configured, see "Slack Integration" section.
 
 ### Bugs, contact & contributions :shipit:
