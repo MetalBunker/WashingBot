@@ -23,8 +23,8 @@ So:
 - Copy the whole WashingBot folder (you can exclude the .git folder) to the DroidScript folder on your cell.
 - Open DroidScript, you should see a new app there!
 
-We should generate a DroidScript SPK, include it in the repo and explain how to install it, it's bit easier. Sorry on this one guys :(  
-We also have in mind generating an APK and release it freely in Google Play if we complete the UI ;) 
+We should generate a DroidScript SPK, include it in the repo and explain how to install it, it's easier. Sorry on this one guys :(  
+We also have in mind generating an APK and releasing it freely in Google Play if we complete the UI ;) 
 
 ### Usage & Operation Workflow
 
