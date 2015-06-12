@@ -89,7 +89,7 @@ function setupSlackBot(){
 
                 if (command.length > 0 && command[0] != "") {
 
-                    switch (command[0]) {
+                    switch (command[0].toLowerCase()) {
                         case "time":
                             if (monitor.hasFinished()) {
                                 miniSlackBotInstance.sendMessage(":clock3: It took me " + monitor.getWashingDurationInMinutes() + "mins. to do the washing", channelId);
