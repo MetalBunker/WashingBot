@@ -1,24 +1,24 @@
 Welcome to WashingBot!
 ----------------------
 
-TODO: "he" or "it" for WashingBot in the whole page?
-TODO: Add some emoticons
-TODO: Add logo
+TODO: Add some emoticons  
 
 A [DroidScript](https://play.google.com/store/apps/details?id=com.smartphoneremote.androidscriptfree) app to help you with your laundry. WashingBot monitors your washing machine, keeps you updated, reminds you to hang your clothes, talks and you can even chat with him!
+
+![WashingBot!](https://github.com/MetalBunker/WashingBot/blob/master/Img/WashingBot.png)
 
 WashingBot feels the vibrations of your washing machine by using your cell's accelerometer, so he knows (or tries to guess :P) how is your washing going. He will notify you when your washing starts, finishes and he will even remind you to go and hang your clothes!
 
 Notifications are verbal (yes, he likes to talk) and by chat, using Slack. You can even ask him for how long he has been washing (yeah, he thinks he's actually doing the laundry, be nice and don't tell him).
 
-The code is very easily extensible, we hope, so you can add new notifications mechanisms and commands very easily (plus we want to see what crazy ideas you have on your mind). And also there a lot of pieces that could be useful for another projects, check it out! 
+The code is easily extensible, we hope, so you can add new notification mechanisms and commands very easily (plus, we want to see what crazy ideas you have on your mind). And also there are a lot of pieces that could be useful for another projects, check it out & hack it! 
 
 #### Download & Installation
 
 As there is no config UI yet, you'll need to install it manually in order to be able to configure it. Although we could create an APK with default config values, but that would mean no chatting :(  
 So: 
 
-- Make sure you have DroidScript installed on your cell (and that it runs!)
+- Make sure you have [DroidScript](https://play.google.com/store/apps/details?id=com.smartphoneremote.androidscriptfree) installed on your cell (and that it runs!)
 - Clone the repo (or download the zip ;) )
 - Check config.js (defaults are ok, but you'll have to fill in your Slack token if you want to chat with him).
 - Copy the whole WashingBot folder (you can exclude the .git folder) to the DroidScript folder on your cell.
@@ -28,12 +28,11 @@ We are planning on generating an APK and release it freely in Google Play if we 
 
 ### Workflow
 
-This is an overview and a mix of all the possible states in which WashingBot can be and the events that can occur, for detailed info check the code ;)  
-Typically it will notify that each state has been reached and also have in mind that in any state pressing "Stop" will make WashingBot go Idle.
+This is an overview and a mix of all the possible states in which WashingBot can be and the events that can occur, but basically it will notify upon reaching each state and also have in mind that in any state pressing "Stop" will make WashingBot go Idle. For detailed info check the code ;)  
 
 A nice state diagram would be useful here :P
 
-TODO: These states takes up too much space, reformat? move to wiki page or another .md maybe?
+TODO: These states takes up too much space, reformat? Move to wiki page or another .md maybe?
 
 #### Init
 
@@ -45,7 +44,7 @@ Nothing going on, ready for receiving commands!
 
 #### Start
 
-Start button has been pressed and WashingBot is waiting a bit before start sensing movement to detect washing start. This is done in order to give the user time to place the phone over the washing machine.
+Start button has been pressed and WashingBot is waiting a bit before start sensing movement to detect the beginning of the washing process. This is done in order to give the user time to place the phone over the washing machine.
 
 #### Waiting Washing Start
 
@@ -66,8 +65,7 @@ No more movement has been detected, washing has finished. WashingBot will start 
 
 #### Waiting for Human
 
-Washing has finished and WashingBot is waiting for a Human to go and hang the clothes.
-If Human is not detected, he will notify it.
+Washing has finished and WashingBot is waiting for a Human to go and hang the clothes. If Human is not detected, he will notify it.
 
 #### Human detected
 
@@ -87,9 +85,8 @@ TODO: Remind of configs
 
 #### Commands
 
-TODO: Explain commands that you can send to WashingBot, when, etc.
-Time
-Say <Text to Say>
+- `Time` : Will tell you for how long he have been washing or how long it took if washing has already finished.
+- `Say <Text to Say>` : Will talk aloud whatever you order him to! Works at anytime, useful for playing jokes :P
 
 ### UDP debugging
 
@@ -108,10 +105,8 @@ The accelerometer reports garbage when the screen goes off, didn't find why.
 
 WashingBot has been tested on the following devices with these results:
 
-TODO: Fix table (broken in GitHub)
-
-| Device | Results | Comments
-|---------|--------|
+| Device | Results | Comments |
+|--------|---------|----------|
 |LG Nexus 4 | Fails | Accel. reports garbage when screen is off.
 |Samsung Galaxy S4 | OK ||
   
@@ -131,8 +126,6 @@ TODO: Fix table (broken in GitHub)
 
 ### Bugs, contact & contributions
 
-TODO: Review
-
 - **Got a crazy idea, fixed a bug or included a nice comment?** Just file an issue on GitHub or send a PR!!
 - **Have free time?** You can pick some ideas from the "Future improvements & ideas" section ;)  
 Idea: File an issue with the topic you want to work on before starting, just to coordinate (is this the right way to do it?).
@@ -142,8 +135,7 @@ And make sure to participate on the [great DroidScript forum](https://groups.goo
 
 ### License
 
-Read `LICENSE`
+- Read `LICENSE`
+- We are in no way affiliated with DroidScript or Slack. Kudos to them for their great products!
+- We don't remember where we took the logo from, if you know please tell us! It's very nice :)
 
-We are in no way affiliated with DroidScript. Kudos to them!
-
-TODO: Review, add trademark, images, Slack, etc
