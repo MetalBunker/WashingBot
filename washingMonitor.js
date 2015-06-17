@@ -217,7 +217,7 @@
 // This function is a needed hack due to the limitation in the bridge between Java
 // and javascript.
 // Rhino can only call functions that are defined in the global scope (defined,
-// declared, written (anonymous functions, or injected ones them won't work
+// declared, written (anonymous functions, or injected ones won't work
 // either)), that's specially important to have in mind when we need to pass
 // functions as callbacks to objects that live on the Java realm, as the sensor
 // in this case.
