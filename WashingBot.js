@@ -46,7 +46,7 @@ function setupUI(){
 
     txtConnection = app.CreateText("", 0.8, 0.2, "Multiline");
     lay.AddChild(txtConnection);
-    txtConnection.SetText("Slack notifications disabled");
+    txtConnection.SetText("Slack integration disabled");
 
     app.AddLayout(lay);
 }
@@ -92,11 +92,11 @@ function setupSlackBot(){
                     switch (command[0].toLowerCase()) {
                         case "time":
                             if (monitor.hasFinished()) {
-                                miniSlackBotInstance.sendMessage(":clock3: It took me " + monitor.getWashingDurationInMinutes() + "mins. to do the washing", channelId);
+                                miniSlackBotInstance.sendMessage(":clock3: It took me " + monitor.getWashingDurationInMinutes() + " mins. to do the washing", channelId);
                                 return;
                             }
                             if (monitor.getStartTime()) {
-                                miniSlackBotInstance.sendMessage(":clock3: I've been washing for " + monitor.getWashingDurationInMinutes() + "mins. :smiley:", channelId);
+                                miniSlackBotInstance.sendMessage(":clock3: I've been washing for " + monitor.getWashingDurationInMinutes() + " mins. :smiley:", channelId);
                                 return;
                             }
                             miniSlackBotInstance.sendMessage("I haven't started yet! :smiley_cat:", channelId);
@@ -163,7 +163,7 @@ function setupMonitor(){
     };
 
     config.onWashingMovement = function(washingDurationMinutes, x, y, z) {
-        txtStatus.SetText("Washing for " + washingDurationMinutes + "mins...");
+        txtStatus.SetText("Washing for " + washingDurationMinutes + " mins...");
         sendPacket(x, y, z);
     }
 
@@ -174,7 +174,7 @@ function setupMonitor(){
     }
 
     config.onFinishedReminder = function(minsSinceFinish, reminderCount) {
-        notifySlack(":information_source: " + reminderCount + " - Remember to hang the clothes, washing has finished " + minsSinceFinish + "mins. ago!");
+        notifySlack(":information_source: " + reminderCount + " - Remember to hang the clothes, washing has finished " + minsSinceFinish + " mins. ago!");
         say("Remember, remember the clothes!");
     };
 
